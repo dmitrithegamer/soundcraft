@@ -1,771 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soundcraft AI — Custom Music for Creators</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --black: #09090b;
-    --surface: #111114;
-    --card: #18181c;
-    --border: rgba(255,255,255,0.08);
-    --border-hover: rgba(255,255,255,0.16);
-    --accent: #a78bfa;
-    --accent-dim: rgba(167,139,250,0.12);
-    --accent-glow: rgba(167,139,250,0.25);
-    --green: #34d399;
-    --green-dim: rgba(52,211,153,0.12);
-    --text: #f4f4f5;
-    --muted: #a1a1aa;
-    --faint: #52525b;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* NOISE TEXTURE */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.5;
-  }
-
-  /* GLOW BLOBS */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .blob-1 { width: 600px; height: 600px; background: rgba(124,58,237,0.15); top: -200px; left: -100px; }
-  .blob-2 { width: 500px; height: 500px; background: rgba(52,211,153,0.08); top: 200px; right: -150px; }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(9,9,11,0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--text);
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-  }
-
-  .logo-dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  .nav-cta {
-    background: var(--accent);
-    color: #1e1b4b;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.875rem;
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .nav-cta:hover { opacity: 0.9; }
-
-  /* HERO */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 8rem 1.5rem 4rem;
-    overflow: hidden;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(167,139,250,0.3);
-    color: var(--accent);
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 0.35rem 0.9rem;
-    border-radius: 100px;
-    margin-bottom: 2rem;
-    letter-spacing: 0.04em;
-  }
-
-  .badge-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2.5rem, 7vw, 5.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 1.5rem;
-    max-width: 900px;
-  }
-
-  h1 .accent { color: var(--accent); }
-  h1 .green { color: var(--green); }
-
-  .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--muted);
-    max-width: 520px;
-    margin-bottom: 3rem;
-    font-weight: 300;
-    line-height: 1.7;
-  }
-
-  /* EMAIL FORM */
-  .form-wrap {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 480px;
-    margin-bottom: 1.5rem;
-  }
-
-  .email-form {
-    display: flex;
-    gap: 0;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .email-form:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-
-  .email-form input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0.9rem 1rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    color: var(--text);
-  }
-
-  .email-form input::placeholder { color: var(--faint); }
-
-  .email-form button {
-    background: var(--accent);
-    color: #1e1b4b;
-    border: none;
-    padding: 0.9rem 1.5rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.2s;
-  }
-
-  .email-form button:hover { opacity: 0.9; }
-
-  .form-note {
-    font-size: 0.8rem;
-    color: var(--faint);
-  }
-
-  .form-note span { color: var(--green); }
-
-  /* WAITLIST COUNTER */
-  .waitlist-count {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
-  .avatars {
-    display: flex;
-  }
-
-  .avatar {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    border: 2px solid var(--black);
-    margin-left: -8px;
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .av1 { background: #7c3aed; color: #ede9fe; }
-  .av2 { background: #0d9488; color: #ccfbf1; }
-  .av3 { background: #db2777; color: #fce7f3; }
-  .av4 { background: #d97706; color: #fef3c7; }
-
-  /* WAVEFORM VISUAL */
-  .waveform {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    margin: 3rem 0 0;
-    height: 48px;
-  }
-
-  .bar {
-    width: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-    opacity: 0.6;
-    animation: wave 1.2s ease-in-out infinite;
-  }
-
-  .bar:nth-child(1)  { height: 12px; animation-delay: 0s; }
-  .bar:nth-child(2)  { height: 24px; animation-delay: 0.1s; }
-  .bar:nth-child(3)  { height: 36px; animation-delay: 0.2s; }
-  .bar:nth-child(4)  { height: 20px; animation-delay: 0.3s; }
-  .bar:nth-child(5)  { height: 44px; animation-delay: 0.15s; }
-  .bar:nth-child(6)  { height: 30px; animation-delay: 0.05s; }
-  .bar:nth-child(7)  { height: 16px; animation-delay: 0.25s; }
-  .bar:nth-child(8)  { height: 38px; animation-delay: 0.35s; }
-  .bar:nth-child(9)  { height: 22px; animation-delay: 0.1s; }
-  .bar:nth-child(10) { height: 40px; animation-delay: 0.4s; }
-  .bar:nth-child(11) { height: 18px; animation-delay: 0.2s; }
-  .bar:nth-child(12) { height: 32px; animation-delay: 0.0s; }
-  .bar:nth-child(13) { height: 14px; animation-delay: 0.3s; }
-  .bar:nth-child(14) { height: 26px; animation-delay: 0.15s; }
-  .bar:nth-child(15) { height: 42px; animation-delay: 0.05s; }
-  .bar:nth-child(16) { height: 20px; animation-delay: 0.25s; }
-  .bar:nth-child(17) { height: 34px; animation-delay: 0.35s; }
-  .bar:nth-child(18) { height: 10px; animation-delay: 0.1s; }
-  .bar:nth-child(19) { height: 28px; animation-delay: 0.4s; }
-  .bar:nth-child(20) { height: 16px; animation-delay: 0.2s; }
-
-  @keyframes wave {
-    0%, 100% { transform: scaleY(1); opacity: 0.6; }
-    50% { transform: scaleY(0.4); opacity: 0.3; }
-  }
-
-  /* PAIN SECTION */
-  .section {
-    position: relative;
-    z-index: 1;
-    padding: 6rem 1.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .section-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  h2 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 1rem;
-  }
-
-  .section-sub {
-    color: var(--muted);
-    font-size: 1.05rem;
-    max-width: 520px;
-    margin-bottom: 3rem;
-    font-weight: 300;
-  }
-
-  /* PAIN CARDS */
-  .pain-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-
-  .pain-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    transition: border-color 0.2s;
-  }
-
-  .pain-card:hover { border-color: var(--border-hover); }
-
-  .pain-icon {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-
-  .pain-icon.red { background: rgba(239,68,68,0.12); }
-  .pain-icon.amber { background: rgba(245,158,11,0.12); }
-  .pain-icon.blue { background: rgba(59,130,246,0.12); }
-
-  .pain-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-  }
-
-  .pain-card p {
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* HOW IT WORKS */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .step {
-    position: relative;
-    padding: 1.75rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-  }
-
-  .step-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 3rem;
-    font-weight: 800;
-    color: var(--border);
-    line-height: 1;
-    margin-bottom: 0.75rem;
-  }
-
-  .step h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-  }
-
-  .step p { font-size: 0.9rem; color: var(--muted); }
-
-  /* FOR WHO */
-  .who-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0.75rem;
-    margin-top: 2.5rem;
-  }
-
-  .who-pill {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .who-pill:hover {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
-
-  .who-emoji { font-size: 1.2rem; }
-
-  /* STAT STRIP */
-  .stat-strip {
-    background: var(--card);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 3rem 1.5rem;
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    text-align: center;
-    padding: 1rem 3rem;
-    border-right: 1px solid var(--border);
-    flex: 1;
-    min-width: 180px;
-  }
-
-  .stat:last-child { border-right: none; }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--accent);
-    display: block;
-  }
-
-  .stat-label {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
-  /* BOTTOM CTA */
-  .cta-section {
-    text-align: center;
-    padding: 6rem 1.5rem 8rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .cta-card {
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 3rem 2.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-
-  .cta-card h2 {
-    font-size: clamp(1.5rem, 4vw, 2.2rem);
-    margin-bottom: 0.75rem;
-  }
-
-  .cta-card p {
-    color: var(--muted);
-    margin-bottom: 2rem;
-    font-weight: 300;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem 1.5rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--faint);
-  }
-
-  /* SUCCESS STATE */
-  .success-msg {
-    display: none;
-    background: var(--green-dim);
-    border: 1px solid rgba(52,211,153,0.3);
-    color: var(--green);
-    padding: 0.85rem 1.25rem;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    text-align: center;
-  }
-
-  /* ANIMATIONS */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  @media (max-width: 600px) {
-    .stat { border-right: none; border-bottom: 1px solid var(--border); }
-    .stat:last-child { border-bottom: none; }
-    .email-form { flex-direction: column; }
-    .email-form button { border-radius: 0 0 10px 10px; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soundcraft AI — Royalty-Free Music for YouTube Creators</title>
+  <meta name="description" content="Generate unique, royalty-free background music in 30 seconds. No copyright strikes. Built for YouTube creators and podcasters." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #111111;
+      --surface2:  #181818;
+      --border:    rgba(255,255,255,0.08);
+      --accent:    #00e5a0;
+      --accent2:   #00b37a;
+      --text:      #f0f0f0;
+      --muted:     #888;
+      --danger:    #ff4d4d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ── Nav ── */
+    nav {
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 9px 20px;
+      border-radius: 100px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 90px 0 70px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.25);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 22px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 44px;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── Waitlist form ── */
+    .waitlist-form {
+      display: flex;
+      gap: 10px;
+      max-width: 460px;
+      margin: 0 auto 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .waitlist-form input[type="email"] {
+      flex: 1;
+      min-width: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 14px 18px;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .waitlist-form input[type="email"]:focus {
+      border-color: var(--accent);
+    }
+
+    .waitlist-form input[type="email"]::placeholder { color: var(--muted); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 14px 26px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .form-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .success-msg {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.2);
+      color: var(--accent);
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* ── Stats ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      padding: 44px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 90px;
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Section headings ── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      margin-bottom: 14px;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    section { margin-bottom: 90px; }
+
+    /* ── Problems ── */
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .problem-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .problem-icon {
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .problem-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .problem-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .problem-card.highlight {
+      border-color: rgba(255,77,77,0.3);
+      background: rgba(255,77,77,0.04);
+    }
+
+    .problem-card.highlight h3 { color: #ff7070; }
+
+    /* ── Audio samples ── */
+    .samples-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .sample-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: border-color 0.2s;
+    }
+
+    .sample-card:hover { border-color: rgba(0,229,160,0.3); }
+
+    .play-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.2s, transform 0.15s;
+      color: #000;
+    }
+
+    .play-btn:hover { opacity: 0.85; transform: scale(1.05); }
+
+    .play-btn svg { width: 16px; height: 16px; fill: #000; margin-left: 2px; }
+    .play-btn.playing svg { margin-left: 0; }
+
+    .sample-info { flex: 1; min-width: 0; }
+
+    .sample-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+    }
+
+    .sample-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .sample-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.2);
+      color: var(--accent);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* Fake waveform bars */
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .waveform-bar {
+      width: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      animation: none;
+    }
+
+    .sample-card.playing .waveform-bar {
+      background: var(--accent);
+      animation: wave 0.8s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.3); }
+    }
+
+    /* ── How it works ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .step-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: rgba(0,229,160,0.15);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.05em;
+    }
+
+    .step h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Who it's for ── */
+    .creators-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .creator-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .creator-chip:hover {
+      border-color: var(--accent);
+      background: rgba(0,229,160,0.05);
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bottom-cta::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .bottom-cta h2 { margin-bottom: 12px; }
+
+    .bottom-cta p {
+      color: var(--muted);
+      margin-bottom: 36px;
+      font-size: 0.95rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── Animations ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.05s; }
+    .fade-in:nth-child(2) { animation-delay: 0.15s; }
+    .fade-in:nth-child(3) { animation-delay: 0.25s; }
+    .fade-in:nth-child(4) { animation-delay: 0.35s; }
+
+    @media (max-width: 600px) {
+      .stats { gap: 28px; }
+      .bottom-cta { padding: 40px 24px; }
+      .sample-card { flex-wrap: wrap; }
+      .waveform { display: none; }
+    }
+  </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a href="#" class="logo">
-    <div class="logo-dot"></div>
-    Soundcraft AI
-  </a>
-  <a href="#waitlist" class="nav-cta">Join waitlist</a>
-</nav>
+<div class="container">
+  <nav>
+    <a href="#" class="logo">Soundcraft<span>AI</span></a>
+    <a href="#waitlist" class="nav-cta">Get early access</a>
+  </nav>
+</div>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+<div class="container">
+  <section class="hero">
+    <div class="badge">Now accepting early access</div>
 
-  <div class="badge">
-    <div class="badge-dot"></div>
-    Now in early access
-  </div>
+    <h1 class="fade-in">
+      Music for your videos.<br /><em>No copyright.</em><br />30 seconds.
+    </h1>
 
-  <h1>
-    Custom music for your<br>
-    videos. <span class="accent">No copyright.</span><br>
-    <span class="green">30 seconds.</span>
-  </h1>
-
-  <p class="hero-sub">
-    Stop losing monetization to copyright strikes. Generate unique, royalty-free background music for every video — tailored to your mood, length, and style.
-  </p>
-
-  <div class="form-wrap" id="waitlist">
-    <form class="email-form" onsubmit="handleSubmit(event, 'hero')">
-      <input type="email" id="hero-email" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Get early access →</button>
-    </form>
-    <div class="success-msg" id="hero-success">
-      🎵 You're on the list! We'll be in touch soon.
-    </div>
-    <p class="form-note" style="margin-top:0.75rem;">
-      Free during beta. <span>247 creators</span> already on the waitlist.
+    <p class="hero-sub fade-in">
+      Generate unique, royalty-free background music tailored to your mood, length, and style — so you never lose monetization to a copyright strike again.
     </p>
-  </div>
 
-  <div class="waitlist-count">
-    <div class="avatars">
-      <div class="avatar av1">YT</div>
-      <div class="avatar av2">PO</div>
-      <div class="avatar av3">TK</div>
-      <div class="avatar av4">VL</div>
+    <div id="hero-form" class="fade-in">
+      <form class="waitlist-form" action="https://formspree.io/f/mzdowrjg" method="POST" id="form-hero">
+        <input type="email" name="email" placeholder="your@email.com" required />
+        <button type="submit" class="btn-primary">Get early access →</button>
+      </form>
+      <p class="form-note">Free during beta &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; No spam</p>
     </div>
-    <span>Joined by YouTubers, podcasters, and travel creators</span>
-  </div>
 
-  <div class="waveform">
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    <div class="bar"></div><div class="bar"></div>
-  </div>
-</section>
+    <div class="success-msg" id="success-hero">
+      🎵 &nbsp; You're on the list! We'll be in touch soon.
+    </div>
+  </section>
 
-<!-- STAT STRIP -->
-<div class="stat-strip">
-  <div class="stat">
-    <span class="stat-num">207M+</span>
-    <span class="stat-label">content creators worldwide</span>
-  </div>
-  <div class="stat">
-    <span class="stat-num">$0</span>
-    <span class="stat-label">in copyright licensing fees</span>
-  </div>
-  <div class="stat">
-    <span class="stat-num">30s</span>
-    <span class="stat-label">average generation time</span>
-  </div>
-  <div class="stat">
-    <span class="stat-num">∞</span>
-    <span class="stat-label">unique tracks on paid plan</span>
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-number">207M+</span>
+      <span class="stat-label">Content creators worldwide</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">30s</span>
+      <span class="stat-label">Avg generation time</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">$0</span>
+      <span class="stat-label">Copyright licensing fees</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">∞</span>
+      <span class="stat-label">Unique tracks on paid plan</span>
+    </div>
   </div>
 </div>
 
-<!-- PAIN SECTION -->
-<div class="section fade-up">
-  <p class="section-label">The problem</p>
-  <h2>Music shouldn't be this hard</h2>
-  <p class="section-sub">Every creator faces the same three problems. We fix all of them.</p>
+<!-- PROBLEM -->
+<div class="container">
+  <section>
+    <p class="section-label">The problem</p>
+    <h2>Music shouldn't be this hard</h2>
+    <p class="section-intro">Every creator faces the same three problems. We fix all of them.</p>
 
-  <div class="pain-grid">
-    <div class="pain-card">
-      <div class="pain-icon red">🚨</div>
-      <h3>Copyright strikes kill your channel</h3>
-      <p>One flagged song can demonetize an entire video — or worse, your whole channel. Labels are getting more aggressive every year.</p>
+    <div class="problems-grid">
+      <div class="problem-card highlight">
+        <span class="problem-icon">🚨</span>
+        <h3>Copyright strikes kill your channel</h3>
+        <p>One flagged song can demonetize an entire video — or your whole channel. Labels are getting more aggressive every year.</p>
+      </div>
+      <div class="problem-card">
+        <span class="problem-icon">💸</span>
+        <h3>Licensing is expensive and confusing</h3>
+        <p>Epidemic Sound, Artlist, and Musicbed cost $150–250/year and still have restrictions you'll accidentally violate.</p>
+      </div>
+      <div class="problem-card">
+        <span class="problem-icon">⏱️</span>
+        <h3>Finding the right track wastes hours</h3>
+        <p>Scrubbing through thousands of tracks to find something that fits your video's exact mood eats time you don't have.</p>
+      </div>
     </div>
-    <div class="pain-card">
-      <div class="pain-icon amber">💸</div>
-      <h3>Licensing is expensive and confusing</h3>
-      <p>Epidemic Sound, Artlist, and Musicbed cost $150–250/year and still have usage restrictions you'll accidentally violate.</p>
+  </section>
+</div>
+
+<!-- AUDIO SAMPLES -->
+<div class="container">
+  <section id="samples">
+    <p class="section-label">Hear it yourself</p>
+    <h2>What Soundcraft AI sounds like</h2>
+    <p class="section-intro">These tracks were generated in under 30 seconds each. This is what you'll get.</p>
+
+    <div class="samples-grid">
+
+      <div class="sample-card" id="card-0">
+        <button class="play-btn" onclick="toggleSample(0)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Chill Lo-Fi Study</div>
+          <div class="sample-meta">Generated in 28s &nbsp;·&nbsp; 2:30</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Lo-Fi</span>
+            <span class="tag">Calm</span>
+            <span class="tag">Study / Focus</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-0">
+          <!-- bars generated by JS -->
+        </div>
+      </div>
+
+      <div class="sample-card" id="card-1">
+        <button class="play-btn" onclick="toggleSample(1)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Upbeat Vlog Energy</div>
+          <div class="sample-meta">Generated in 22s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Electronic</span>
+            <span class="tag">Energetic</span>
+            <span class="tag">Travel / Vlog</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-1"></div>
+      </div>
+
+      <div class="sample-card" id="card-2">
+        <button class="play-btn" onclick="toggleSample(2)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Cinematic Podcast Intro</div>
+          <div class="sample-meta">Generated in 31s &nbsp;·&nbsp; 0:30</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Cinematic</span>
+            <span class="tag">Dramatic</span>
+            <span class="tag">Podcast</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-2"></div>
+      </div>
+
     </div>
-    <div class="pain-card">
-      <div class="pain-icon blue">⏱️</div>
-      <h3>Finding the right track wastes hours</h3>
-      <p>Scrubbing through thousands of tracks to find something that fits your video's exact mood and length eats time you don't have.</p>
-    </div>
-  </div>
+
+
+  </section>
 </div>
 
 <!-- HOW IT WORKS -->
-<div class="section fade-up">
-  <p class="section-label">How it works</p>
-  <h2>Three inputs. One perfect track.</h2>
-  <p class="section-sub">No music knowledge needed. If you can describe a mood, you can make a track.</p>
+<div class="container">
+  <section>
+    <p class="section-label">How it works</p>
+    <h2>Three inputs. One perfect track.</h2>
+    <p class="section-intro">No music knowledge needed. If you can describe a mood, you can make a track.</p>
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">01</div>
-      <h3>Describe your vibe</h3>
-      <p>Pick a mood, genre, and energy level. Type anything — "calm lo-fi for a study vlog" or "epic cinematic for a travel montage."</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">01</div>
+        <h3>Describe your vibe</h3>
+        <p>Pick a mood, genre, and energy level. Type anything — "calm lo-fi for a study vlog" or "epic cinematic for a travel montage."</p>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <h3>Set your length</h3>
+        <p>Match the music exactly to your video. 30 seconds, 4 minutes, whatever you need — no fading or awkward cuts.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <h3>Download and use</h3>
+        <p>Your track is ready in under 30 seconds. MP3 or WAV. Use it on YouTube, TikTok, podcasts, client work — everywhere.</p>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <h3>Set your length</h3>
-      <p>Match the music exactly to your video. 30 seconds, 4 minutes, whatever you need — no fading or cutting required.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <h3>Download and use</h3>
-      <p>Your track is ready in under 30 seconds. Download as MP3 or WAV. Use it everywhere — YouTube, TikTok, podcasts, client work.</p>
-    </div>
-  </div>
+  </section>
 </div>
 
 <!-- WHO IT'S FOR -->
-<div class="section fade-up">
-  <p class="section-label">Who it's for</p>
-  <h2>Built for creators who publish constantly</h2>
-  <p class="section-sub">If you make content regularly, you need music regularly. We make that painless.</p>
+<div class="container">
+  <section>
+    <p class="section-label">Who it's for</p>
+    <h2>Built for creators who publish constantly</h2>
+    <p class="section-intro">If you make content regularly, you need music regularly. We make that painless.</p>
 
-  <div class="who-grid">
-    <div class="who-pill"><span class="who-emoji">🎬</span> YouTubers</div>
-    <div class="who-pill"><span class="who-emoji">🎙️</span> Podcasters</div>
-    <div class="who-pill"><span class="who-emoji">✈️</span> Travel vloggers</div>
-    <div class="who-pill"><span class="who-emoji">💪</span> Fitness creators</div>
-    <div class="who-pill"><span class="who-emoji">📚</span> Educators</div>
-    <div class="who-pill"><span class="who-emoji">🎮</span> Gaming channels</div>
-    <div class="who-pill"><span class="who-emoji">🏡</span> Lifestyle creators</div>
-    <div class="who-pill"><span class="who-emoji">💼</span> Business/LinkedIn</div>
-  </div>
+    <div class="creators-grid">
+      <div class="creator-chip">🎬 YouTubers</div>
+      <div class="creator-chip">🎙️ Podcasters</div>
+      <div class="creator-chip">✈️ Travel vloggers</div>
+      <div class="creator-chip">💪 Fitness creators</div>
+      <div class="creator-chip">📚 Educators</div>
+      <div class="creator-chip">🎮 Gaming channels</div>
+      <div class="creator-chip">🏡 Lifestyle creators</div>
+      <div class="creator-chip">💼 Business creators</div>
+    </div>
+  </section>
 </div>
 
 <!-- BOTTOM CTA -->
-<div class="cta-section fade-up">
-  <div class="cta-card">
+<div class="container">
+  <section id="waitlist" class="bottom-cta">
     <h2>Get in early. It's free.</h2>
-    <p>Join the waitlist and get free access during our beta. No credit card. No commitment. Just music that works.</p>
+    <p>Join the waitlist and get <strong>3 free tracks</strong> during our beta. No credit card. No commitment.</p>
 
-    <form class="email-form" onsubmit="handleSubmit(event, 'bottom')" style="max-width:100%;">
-      <input type="email" id="bottom-email" placeholder="your@email.com" required>
-      <button type="submit">Join waitlist →</button>
-    </form>
-    <div class="success-msg" id="bottom-success" style="margin-top:1rem;">
-      🎵 You're on the list! We'll be in touch soon.
+    <div id="bottom-form">
+      <form class="waitlist-form" action="https://formspree.io/f/mzdowrjg" method="POST" id="form-bottom" style="justify-content:center">
+        <input type="email" name="email" placeholder="your@email.com" required />
+        <button type="submit" class="btn-primary">Get 3 free tracks →</button>
+      </form>
+      <p class="form-note" style="margin-top:12px">No spam. Unsubscribe anytime.</p>
     </div>
 
-    <p style="font-size:0.8rem; color:var(--faint); margin-top:1rem;">
-      No spam. Unsubscribe anytime. Beta spots are limited.
-    </p>
-  </div>
+    <div class="success-msg" id="success-bottom" style="justify-content:center; margin-top:0">
+      🎵 &nbsp; You're on the list! We'll be in touch soon.
+    </div>
+  </section>
 </div>
 
 <!-- FOOTER -->
-<footer>
-  <p>© 2026 Soundcraft AI · Built for creators, by creators</p>
-</footer>
+<div class="container">
+  <footer>
+    <span>© 2026 Soundcraft AI</span>
+    <span>Built for creators, by creators</span>
+    <a href="mailto:soundcraftaihq@gmail.com" style="color:var(--muted);text-decoration:none;">soundcraftaihq@gmail.com</a>
+  </footer>
+</div>
 
 <script>
-  function handleSubmit(e, id) {
-    e.preventDefault();
-    const emailInput = document.getElementById(id + '-email');
-    const successMsg = document.getElementById(id + '-success');
-    const form = emailInput.closest('form');
+  // ── Audio files ──────────────────────────────────────────────────────────────
+  const audioFiles = [
+    'chill lofi background music for a study vlog (f7382190260e453aafaa25907d6fed0f).mp3',
+    'upbeat electronic background music for a vlog high... (7af4c1adff3846e399e099a1412e3311).mp3',
+    'cinematic dramatic podcast intro music (c2f1f600a8704384bebf6c2dc0d29740).mp3'
+  ];
 
-    const email = emailInput.value;
+  // Pre-create Audio objects
+  const audioPlayers = audioFiles.map(f => {
+    const a = new Audio(encodeURIComponent(f));
+    a.preload = 'none';
+    return a;
+  });
 
-    fetch('https://formspree.io/f/mzdowrjg', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
-    }).catch(() => {});
+  // ── Waveform bars ────────────────────────────────────────────────────────────
+  const heights = [4,7,12,18,24,20,14,10,16,22,28,24,18,12,8,14,20,26,22,16,10,6,12,18,24,20,14,8];
+  [0,1,2].forEach(i => {
+    const wave = document.getElementById('wave-' + i);
+    heights.forEach((h, j) => {
+      const bar = document.createElement('div');
+      bar.className = 'waveform-bar';
+      bar.style.height = h + 'px';
+      bar.style.animationDelay = (j * 0.06) + 's';
+      wave.appendChild(bar);
+    });
+  });
 
-    form.style.display = 'none';
-    successMsg.style.display = 'block';
+  let activeSample = null;
+  const playIcons = {
+    play:  '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#000;margin-left:2px"><path d="M8 5v14l11-7z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#000"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
+  };
+
+  function stopActive() {
+    if (activeSample !== null) {
+      audioPlayers[activeSample].pause();
+      audioPlayers[activeSample].currentTime = 0;
+      const prev = document.getElementById('card-' + activeSample);
+      prev.classList.remove('playing');
+      prev.querySelector('.play-btn').innerHTML = playIcons.play;
+      activeSample = null;
+    }
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+  function toggleSample(idx) {
+    const card = document.getElementById('card-' + idx);
+    const btn  = card.querySelector('.play-btn');
+
+    if (activeSample === idx) {
+      stopActive();
+      return;
+    }
+
+    stopActive();
+
+    audioPlayers[idx].play();
+    card.classList.add('playing');
+    btn.innerHTML = playIcons.pause;
+    activeSample = idx;
+
+    // Auto-reset when track ends
+    audioPlayers[idx].onended = () => {
+      card.classList.remove('playing');
+      btn.innerHTML = playIcons.play;
+      activeSample = null;
+    };
+  }
+
+  async function handleForm(formId, successId) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.textContent = 'Joining...';
+      btn.disabled = true;
+      try {
+        await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        form.closest('div').style.display = 'none';
+        document.getElementById(successId).style.display = 'flex';
+      } catch {
+        btn.textContent = 'Try again';
+        btn.disabled = false;
       }
     });
-  }, { threshold: 0.15 });
+  }
 
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  handleForm('form-hero', 'success-hero');
+  handleForm('form-bottom', 'success-bottom');
 </script>
 </body>
 </html>

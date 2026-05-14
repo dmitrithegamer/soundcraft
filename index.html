@@ -764,14 +764,14 @@
 <script>
   // ── Audio files ──────────────────────────────────────────────────────────────
   const audioFiles = [
-    'chill lofi background music for a study vlog (f7382190260e453aafaa25907d6fed0f).mp3',
-    'upbeat electronic background music for a vlog high... (7af4c1adff3846e399e099a1412e3311).mp3',
-    'cinematic dramatic podcast intro music (c2f1f600a8704384bebf6c2dc0d29740).mp3'
+    'chill%20lofi%20background%20music%20for%20a%20study%20vlog%20(f7382190260e453aafaa25907d6fed0f).mp3',
+    'upbeat%20electronic%20background%20music%20for%20a%20vlog%20high...%20(7af4c1adff3846e399e099a1412e3311).mp3',
+    'cinematic%20dramatic%20podcast%20intro%20music%20(c2f1f600a8704384bebf6c2dc0d29740).mp3'
   ];
 
   // Pre-create Audio objects
   const audioPlayers = audioFiles.map(f => {
-    const a = new Audio(encodeURIComponent(f));
+    const a = new Audio(f);
     a.preload = 'none';
     return a;
   });

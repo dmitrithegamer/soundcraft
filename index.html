@@ -290,7 +290,8 @@
 
     .problem-card.highlight h3 { color: #ff7070; }
 
-    .samples-grid { display: grid; gap: 12px; }
+    .samples-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (max-width: 700px) { .samples-grid { grid-template-columns: 1fr; } }
 
     .sample-card {
       background: var(--surface);
@@ -696,11 +697,90 @@
         </div>
         <div class="waveform" id="wave-2"></div>
       </div>
+      <div class="sample-card" id="card-3">
+        <button class="play-btn" onclick="toggleSample(3)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Warm Acoustic Vlog</div>
+          <div class="sample-meta">Generated in 26s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Acoustic</span>
+            <span class="tag">Warm</span>
+            <span class="tag">Lifestyle / Vlog</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-3"></div>
+      </div>
+
+      <div class="sample-card" id="card-4">
+        <button class="play-btn" onclick="toggleSample(4)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Chill Hip Hop Beat</div>
+          <div class="sample-meta">Generated in 24s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Hip Hop</span>
+            <span class="tag">Chill</span>
+            <span class="tag">Gaming / Commentary</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-4"></div>
+      </div>
+
+      <div class="sample-card" id="card-5">
+        <button class="play-btn" onclick="toggleSample(5)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Dark Synthwave</div>
+          <div class="sample-meta">Generated in 29s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Synthwave</span>
+            <span class="tag">Dark</span>
+            <span class="tag">Tech / Gaming Intro</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-5"></div>
+      </div>
+
+      <div class="sample-card" id="card-6">
+        <button class="play-btn" onclick="toggleSample(6)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">Upbeat Travel Pop</div>
+          <div class="sample-meta">Generated in 21s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Pop</span>
+            <span class="tag">Upbeat</span>
+            <span class="tag">Travel / Adventure</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-6"></div>
+      </div>
+
+      <div class="sample-card" id="card-7">
+        <button class="play-btn" onclick="toggleSample(7)" aria-label="Play sample">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="sample-info">
+          <div class="sample-title">High Energy Trap</div>
+          <div class="sample-meta">Generated in 27s &nbsp;·&nbsp; 1:00</div>
+          <div class="sample-tags" style="margin-top:8px">
+            <span class="tag">Trap</span>
+            <span class="tag">High Energy</span>
+            <span class="tag">Gaming / Hype</span>
+          </div>
+        </div>
+        <div class="waveform" id="wave-7"></div>
+      </div>
+
     </div>
   </section>
 </div>
 
-<!-- HOW IT WORKS -->
 <div class="container">
   <section>
     <p class="section-label">How it works</p>
@@ -838,7 +918,12 @@
   const audioFiles = [
     'chill%20lofi%20background%20music%20for%20a%20study%20vlog%20(f7382190260e453aafaa25907d6fed0f).mp3',
     'upbeat%20electronic%20background%20music%20for%20a%20vlog%20high...%20(7af4c1adff3846e399e099a1412e3311).mp3',
-    'cinematic%20dramatic%20podcast%20intro%20music%20(c2f1f600a8704384bebf6c2dc0d29740).mp3'
+    'cinematic%20dramatic%20podcast%20intro%20music%20(c2f1f600a8704384bebf6c2dc0d29740).mp3',
+    'warm%20acoustic%20guitar%20background%20music%20for%20vlog%20(10c559ad3d8e47d884bf8fb00619acd0).mp3',
+    'chill%20hip%20hop%20beat%20instrumental%20background%20music%20(39b24dd2da224b65bf72c8ff1aa9b6b0).mp3',
+    'dark%20synthwave%20electronic%20background%20music%20(3ee4aa3d53684673a6ac627af9509e62).mp3',
+    'upbeat%20pop%20background%20music%20for%20travel%20video%20(696e76df3f1b4b0d950e35573e00d788).mp3',
+    'high%20energy%20trap%20beat%20instrumental%20background%20musi...%20(068786902f9b4a7dad3b41f1775a5025).mp3'
   ];
 
   const audioPlayers = audioFiles.map(f => {
@@ -848,7 +933,7 @@
   });
 
   const heights = [4,7,12,18,24,20,14,10,16,22,28,24,18,12,8,14,20,26,22,16,10,6,12,18,24,20,14,8];
-  [0,1,2].forEach(i => {
+  [0,1,2,3,4,5,6,7].forEach(i => {
     const wave = document.getElementById('wave-' + i);
     heights.forEach((h, j) => {
       const bar = document.createElement('div');

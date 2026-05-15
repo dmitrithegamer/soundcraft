@@ -35,7 +35,6 @@
       overflow-x: hidden;
     }
 
-    /* ── Noise overlay ── */
     body::before {
       content: '';
       position: fixed;
@@ -46,10 +45,8 @@
       opacity: 0.4;
     }
 
-    /* ── Layout ── */
     .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-    /* ── Nav ── */
     nav {
       padding: 22px 0;
       display: flex;
@@ -83,10 +80,10 @@
     }
     .nav-cta:hover { opacity: 0.85; }
 
-    /* ── Hero ── */
     .hero {
       padding: 90px 0 70px;
       text-align: center;
+      position: relative;
     }
 
     .badge {
@@ -144,7 +141,6 @@
       line-height: 1.7;
     }
 
-    /* ── Waitlist form ── */
     .waitlist-form {
       display: flex;
       gap: 10px;
@@ -168,10 +164,7 @@
       transition: border-color 0.2s;
     }
 
-    .waitlist-form input[type="email"]:focus {
-      border-color: var(--accent);
-    }
-
+    .waitlist-form input[type="email"]:focus { border-color: var(--accent); }
     .waitlist-form input[type="email"]::placeholder { color: var(--muted); }
 
     .btn-primary {
@@ -192,10 +185,7 @@
     .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
 
-    .form-note {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
+    .form-note { font-size: 0.78rem; color: var(--muted); }
 
     .success-msg {
       display: none;
@@ -211,7 +201,6 @@
       margin: 0 auto;
     }
 
-    /* ── Stats ── */
     .stats {
       display: flex;
       justify-content: center;
@@ -241,7 +230,6 @@
       letter-spacing: 0.06em;
     }
 
-    /* ── Section headings ── */
     .section-label {
       font-size: 0.72rem;
       font-weight: 600;
@@ -270,7 +258,6 @@
 
     section { margin-bottom: 90px; }
 
-    /* ── Problems ── */
     .problems-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -284,11 +271,7 @@
       padding: 28px;
     }
 
-    .problem-icon {
-      font-size: 1.6rem;
-      margin-bottom: 14px;
-      display: block;
-    }
+    .problem-icon { font-size: 1.6rem; margin-bottom: 14px; display: block; }
 
     .problem-card h3 {
       font-family: 'Syne', sans-serif;
@@ -298,11 +281,7 @@
       letter-spacing: -0.01em;
     }
 
-    .problem-card p {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .problem-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
 
     .problem-card.highlight {
       border-color: rgba(255,77,77,0.3);
@@ -311,11 +290,7 @@
 
     .problem-card.highlight h3 { color: #ff7070; }
 
-    /* ── Audio samples ── */
-    .samples-grid {
-      display: grid;
-      gap: 12px;
-    }
+    .samples-grid { display: grid; gap: 12px; }
 
     .sample-card {
       background: var(--surface);
@@ -345,7 +320,6 @@
     }
 
     .play-btn:hover { opacity: 0.85; transform: scale(1.05); }
-
     .play-btn svg { width: 16px; height: 16px; fill: #000; margin-left: 2px; }
     .play-btn.playing svg { margin-left: 0; }
 
@@ -358,16 +332,9 @@
       margin-bottom: 3px;
     }
 
-    .sample-meta {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
+    .sample-meta { font-size: 0.78rem; color: var(--muted); }
 
-    .sample-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    .sample-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 
     .tag {
       font-size: 0.7rem;
@@ -380,7 +347,6 @@
       letter-spacing: 0.03em;
     }
 
-    /* Fake waveform bars */
     .waveform {
       display: flex;
       align-items: center;
@@ -406,7 +372,6 @@
       50% { transform: scaleY(0.3); }
     }
 
-    /* ── How it works ── */
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -438,18 +403,68 @@
       margin-bottom: 8px;
     }
 
-    .step p {
-      font-size: 0.86rem;
+    .step p { font-size: 0.86rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── License section ── */
+    .license-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .license-item {
+      background: var(--surface);
+      border: 1px solid rgba(0,229,160,0.15);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .license-check {
+      width: 22px;
+      height: 22px;
+      background: rgba(0,229,160,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .license-item-text strong {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .license-item-text span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .license-note {
+      background: rgba(0,229,160,0.05);
+      border: 1px solid rgba(0,229,160,0.15);
+      border-radius: 12px;
+      padding: 18px 22px;
+      font-size: 0.85rem;
       color: var(--muted);
       line-height: 1.6;
     }
 
-    /* ── Who it's for ── */
-    .creators-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    .license-note strong { color: var(--text); }
+
+    .creators-grid { display: flex; flex-wrap: wrap; gap: 10px; }
 
     .creator-chip {
       display: flex;
@@ -469,7 +484,6 @@
       background: rgba(0,229,160,0.05);
     }
 
-    /* ── Bottom CTA ── */
     .bottom-cta {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -492,14 +506,8 @@
     }
 
     .bottom-cta h2 { margin-bottom: 12px; }
+    .bottom-cta p { color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
 
-    .bottom-cta p {
-      color: var(--muted);
-      margin-bottom: 36px;
-      font-size: 0.95rem;
-    }
-
-    /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 28px 0;
@@ -512,7 +520,6 @@
       color: var(--muted);
     }
 
-    /* ── Animations ── */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -535,10 +542,6 @@
       .waveform { display: none; }
     }
 
-    /* ── Hero canvas visualizer ── */
-    .hero {
-      position: relative;
-    }
     #hero-canvas {
       position: absolute;
       top: 0; left: 50%;
@@ -549,10 +552,8 @@
       opacity: 0.18;
       z-index: 0;
     }
-    .hero > * {
-      position: relative;
-      z-index: 1;
-    }
+
+    .hero > * { position: relative; z-index: 1; }
   </style>
 </head>
 <body>
@@ -595,20 +596,20 @@
   <!-- STATS -->
   <div class="stats">
     <div class="stat-item">
-      <span class="stat-number">900M+</span>
-      <span class="stat-label">YouTube copyright claims per year</span>
-    </div>
-    <div class="stat-item">
       <span class="stat-number">30s</span>
       <span class="stat-label">Avg generation time</span>
     </div>
     <div class="stat-item">
-      <span class="stat-number">$150+</span>
-      <span class="stat-label">What Epidemic Sound costs per year</span>
+      <span class="stat-number">$1,800</span>
+      <span class="stat-label">What 3 years of Epidemic Sound costs you</span>
     </div>
     <div class="stat-item">
       <span class="stat-number">45min</span>
-      <span class="stat-label">Avg time creators spend finding music</span>
+      <span class="stat-label">Avg time creators spend finding music per video</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">0</span>
+      <span class="stat-label">Copyright strikes on generated tracks</span>
     </div>
   </div>
 </div>
@@ -629,7 +630,7 @@
       <div class="problem-card">
         <span class="problem-icon">💸</span>
         <h3>Licensing is expensive and confusing</h3>
-        <p>Epidemic Sound, Artlist, and Musicbed cost $150–250/year and still have restrictions you'll accidentally violate.</p>
+        <p>Epidemic Sound, Artlist, and Musicbed cost $150–250/year. That's up to $750 over 3 years — and you still might accidentally violate their terms.</p>
       </div>
       <div class="problem-card">
         <span class="problem-icon">⏱️</span>
@@ -648,7 +649,6 @@
     <p class="section-intro">These tracks were generated in under 30 seconds each. This is what you'll get.</p>
 
     <div class="samples-grid">
-
       <div class="sample-card" id="card-0">
         <button class="play-btn" onclick="toggleSample(0)" aria-label="Play sample">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -662,9 +662,7 @@
             <span class="tag">Study / Focus</span>
           </div>
         </div>
-        <div class="waveform" id="wave-0">
-          <!-- bars generated by JS -->
-        </div>
+        <div class="waveform" id="wave-0"></div>
       </div>
 
       <div class="sample-card" id="card-1">
@@ -698,10 +696,7 @@
         </div>
         <div class="waveform" id="wave-2"></div>
       </div>
-
     </div>
-
-
   </section>
 </div>
 
@@ -725,9 +720,67 @@
       </div>
       <div class="step">
         <div class="step-number">03</div>
-        <h3>Download and use</h3>
-        <p>Your track is ready in under 30 seconds. MP3 or WAV. Use it on YouTube, TikTok, podcasts, client work — everywhere.</p>
+        <h3>Download and use anywhere</h3>
+        <p>Your track is ready in under 30 seconds. Download as MP3 or WAV. Full commercial rights included — no attribution required.</p>
       </div>
+    </div>
+  </section>
+</div>
+
+<!-- LICENSING -->
+<div class="container">
+  <section>
+    <p class="section-label">Your license</p>
+    <h2>Exactly what you're allowed to do</h2>
+    <p class="section-intro">Every track you generate comes with a full commercial license. Here's what that means in plain English.</p>
+
+    <div class="license-grid">
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>Monetized YouTube videos</strong>
+          <span>Use on any video with ads enabled. No revenue sharing, no restrictions.</span>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>TikTok &amp; Instagram Reels</strong>
+          <span>Post on any social platform, monetized or not.</span>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>Podcasts</strong>
+          <span>Use as intro, outro, or background music on any podcast platform.</span>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>Client work</strong>
+          <span>Deliver tracks to clients for their videos, ads, or projects.</span>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>Ads &amp; commercial projects</strong>
+          <span>Use in paid advertising, brand videos, and commercial content.</span>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-check">✓</div>
+        <div class="license-item-text">
+          <strong>No attribution required</strong>
+          <span>You don't need to credit Soundcraft AI anywhere. The music is yours.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="license-note">
+      <strong>The short version:</strong> Every track you generate is original and owned by you. It has never existed before, so no label can claim it. Use it anywhere, forever, with no copyright strikes — guaranteed.
     </div>
   </section>
 </div>
@@ -782,21 +835,18 @@
 </div>
 
 <script>
-  // ── Audio files ──────────────────────────────────────────────────────────────
   const audioFiles = [
     'chill%20lofi%20background%20music%20for%20a%20study%20vlog%20(f7382190260e453aafaa25907d6fed0f).mp3',
     'upbeat%20electronic%20background%20music%20for%20a%20vlog%20high...%20(7af4c1adff3846e399e099a1412e3311).mp3',
     'cinematic%20dramatic%20podcast%20intro%20music%20(c2f1f600a8704384bebf6c2dc0d29740).mp3'
   ];
 
-  // Pre-create Audio objects
   const audioPlayers = audioFiles.map(f => {
     const a = new Audio(f);
     a.preload = 'none';
     return a;
   });
 
-  // ── Waveform bars ────────────────────────────────────────────────────────────
   const heights = [4,7,12,18,24,20,14,10,16,22,28,24,18,12,8,14,20,26,22,16,10,6,12,18,24,20,14,8];
   [0,1,2].forEach(i => {
     const wave = document.getElementById('wave-' + i);
@@ -829,20 +879,12 @@
   function toggleSample(idx) {
     const card = document.getElementById('card-' + idx);
     const btn  = card.querySelector('.play-btn');
-
-    if (activeSample === idx) {
-      stopActive();
-      return;
-    }
-
+    if (activeSample === idx) { stopActive(); return; }
     stopActive();
-
     audioPlayers[idx].play();
     card.classList.add('playing');
     btn.innerHTML = playIcons.pause;
     activeSample = idx;
-
-    // Auto-reset when track ends
     audioPlayers[idx].onended = () => {
       card.classList.remove('playing');
       btn.innerHTML = playIcons.play;
@@ -869,13 +911,11 @@
     });
   }
 
-
-  // ── Hero waveform visualizer ─────────────────────────────────────────────────
   (function() {
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
     const BAR_COUNT = 80;
-    const bars = Array.from({ length: BAR_COUNT }, (_, i) => ({
+    const bars = Array.from({ length: BAR_COUNT }, () => ({
       phase: Math.random() * Math.PI * 2,
       speed: 0.4 + Math.random() * 0.6,
       amp:   0.3 + Math.random() * 0.7,
@@ -891,25 +931,19 @@
     function draw(t) {
       const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
-
-      const barW   = W / BAR_COUNT;
+      const barW = W / BAR_COUNT;
       const centerY = H / 2;
-
       bars.forEach((b, i) => {
         const height = b.amp * (H * 0.38) * Math.abs(Math.sin(b.phase + t * b.speed * 0.001));
         const x = i * barW + barW * 0.2;
         const w = barW * 0.55;
         const radius = w / 2;
-
         ctx.fillStyle = '#00e5a0';
-        // top bar
         roundRect(ctx, x, centerY - height, w, height, radius);
         ctx.fill();
-        // mirror bottom
         roundRect(ctx, x, centerY, w, height, radius);
         ctx.fill();
       });
-
       requestAnimationFrame(draw);
     }
 
@@ -930,6 +964,7 @@
 
     requestAnimationFrame(draw);
   })();
+
   handleForm('form-hero', 'success-hero');
   handleForm('form-bottom', 'success-bottom');
 </script>
